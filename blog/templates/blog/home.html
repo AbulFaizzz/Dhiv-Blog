@@ -1,0 +1,39 @@
+{% extends "blog/blog_base.html" %}
+{% load static %}
+{% load format_date %}
+
+{% block title %}
+މައި ޞަފުޙާ
+{% endblock %}
+
+{% block content %}
+
+  {% for post in posts %}
+  <article class="media content-section d-flex">
+    {% comment %} <img class="rounded-circle article-img border border-secondary flex-shrink-0 align-self-start" src="{{ post.author.profile.image.url }}"> {% endcomment %}
+    <div class="d-flex flex-column flex-shrink-0">
+      <img class="rounded-circle article-img border border-secondary align-self-center" src="{{ post.author.profile.image.url }}">
+      {% if post.comments.exists %}
+      <small class="text-muted pt-2 pe-1 align-self-center">{{ post.comments.count }} ކޮމެންޓް</small>
+      {% endif %}
+      {% if post.likes.exists %}
+      <small class="text-muted pt-2 pe-1 align-self-center">{{ post.likes.count }} ލައިކް</small>
+      {% endif %}
+    </div>
+    <div class="media body me-4 flex-fill">
+      <div class="article-metadata">
+        {% if user == post.author %}
+        <a href={% url 'users-profilepage' %}>{{ post.author }}</a>
+        {% else %}
+        <a href={% url 'blog-viewprofile' post.author.username %}>{{ post.author }}</a>
+        {% endif %}
+        <small class="text-muted">{{ post.date_posted|format_date }}</small>
+      </div>
+      <h2 class="my-3"><a class="article-title" href={% url 'blog-postdetail' post.pk %}>{{ post.title }}</a></h2>
+      <p class="article-content">{{ post.content|truncatewords:50 }}</p>
+    </div>
+  </article>
+  {% endfor %}
+
+{% endblock content %}
+    

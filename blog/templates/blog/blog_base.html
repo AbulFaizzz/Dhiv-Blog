@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+<!-- Site Header & Nav -->
+<header class="site-header">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-nav fixed-top">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-between" id="navbarToggle">
+        {% if user.is_authenticated %}
+        <div class="navbar-nav align-items-start">
+          <button class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#logoutModal">ލޮގްއައުޓް</button>
+          <a class="nav-item nav-link ms-lg-3" href={% url 'users-profilepage' %}>ޕްރޮފައިލް</a>
+        </div>
+        {% else %}
+        <div class="navbar-nav align-items-start">
+          <button class="nav-item nav-link" data-bs-toggle="modal" data-bs-target="#loginModal">ލޮގްއިން</button>
+          <button class="nav-item nav-link ms-lg-3" data-bs-toggle="modal" data-bs-target="#registerModal">ރެޖިސްޓަރ</button>
+        </div>
+        {% endif %}
+        <div class="navbar-nav">
+          <a class="nav-item nav-link" href={% url 'blog-aboutpage' %}>ސައިޓް އާ ބެހޭަ މައުލޫމާތު</a>
+          <a class="nav-item nav-link ms-lg-3" href={% url 'blog-homepage' %}>މައި ޞަފްޙާ</a>
+        </div>
+      </div>
+      <a class="navbar-brand ms-auto ms-lg-4 me-0" href="{% url 'blog-homepage' %}">
+        ދިވް
+        <img src="{% static 'icons/Maldives_Flag.png' %}" alt="Maldivian Flag">
+      </a>
+    </div>
+  </nav>
+</header>
+
+<!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header justify-content-between">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h1 class="modal-title fs-5" id="loginModalLabel">ލޮގްއިން</h1>
+      </div>
+
+      <form method=POST>
+        <div class="modal-body">
+          <div class="form-floating" dir="rtl">
+            {% csrf_token %}
+            {{ login_form|crispy }}
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <small class="btn btn-link btn-sm me-auto" data-bs-toggle="modal" data-bs-target="#registerModal">އާ އެކައުންޓެއް ހެއްދެވުމަށް</small>
+          <button class="btn btn-primary btn-sm" type="submit" name="submit" value="log_in">އެކައުންޓަށް ލޮގްއިން ވުމަށް</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header justify-content-between">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h1 class="modal-title fs-5" id="registerModalLabel">ރެޖިސްޓަރ</h1>
+      </div>
+
+      <form method=POST>
+        <div class="modal-body">
+          <div class="form-floating" dir="rtl">
+            {% csrf_token %}
+            {{ reg_form|crispy }}
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <small class="btn btn-link btn-sm me-auto" data-bs-toggle="modal" data-bs-target="#loginModal">އެކައުންޓަކަށް ލޮގްއިން ވުމަށް</small>
+          <button class="btn btn-success btn-sm" type="submit" name="submit" value="sign_up">އެކައުންޓް ރެޖިސްޓަރ ކުރެއްވުމަށް</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- Logout Confirmation Modal -->
+<div class="modal modal-sm fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content rounded-pill">
+
+      {% comment %} <div class="modal-header">
+        <h1 class="modal-title fs-5" id="logoutModalLabel">Confirm</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div> {% endcomment %}
+
+      <div class="modal-body d-flex justify-content-around align-items-center">
+        <form method=POST>
+          {% csrf_token %}
+          <button class="btn btn-warning rounded-5" type="submit" name="submit" value="log_out">ލައްބަ</button>
+        </form>
+        <h4>ލޮގްއައުޓް ވަނީތޯ؟</h4>
+      </div>
+
+      {% comment %} <div class="modal-footer">
+        <button class="btn btn-danger" type="submit" name="submit" value="log_out">Yes</button>
+      </div> {% endcomment %}
+
+    </div>
+  </div>
+</div>
+
+<!-- Change Profile Modal -->
+<div class="modal fade" id="changeProfModal" tabindex="-1" aria-labelledby="changeProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header justify-content-between">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h1 class="modal-title fs-5" id="profileModalLabel">{{ user.username }} ގެ ޕްރޮފައިލް</h1>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data">
+        <div class="modal-body">
+          {% csrf_token %}
+          <fieldset class="form-group" dir="rtl">
+              {{ u_form|crispy }}
+              {{ p_form|crispy }}
+          </fieldset>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-success btn-sm" type="submit" name="submit" value="change_prof">ބަދަލުތައް ޔަގީން ކޮއްލުމަށް</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- Post Delete Confirmation Modal -->
+<div class="modal modal-sm fade" id="deletePostModal" tabindex="-1" aria-labelledby="deletePostModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content rounded-pill">
+
+      <div class="modal-body d-flex justify-content-around align-items-center">
+        <form method=POST>
+          {% csrf_token %}
+          <button class="btn btn-danger rounded-5" type="submit" name="submit" value="post_delete">ލައްބަ</button>
+        </form>
+        <h5>ޕޯސްޓް ޑިލީޓް ކޮއްލަނީތޯ؟</h5>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Site Main Content -->
+<main role="main" class="container" dir="rtl">
+  <div class="row">
+    <div class="col-md-8">
+      {% block content %}
+      {% endblock content %}
+    </div>
+    <div class="col-md-4">
+      {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+      {% endif %}
+      <div class="content-section">
+        <h3>ދިވް އަށް މަރުޙަބާ</h3>
+          <ul class="list-group pe-0 ms-2">
+            <li class="list-group-item list-group-item-light">އެންމެ ފަހުގެ ޕޯސްޓްތައް</li>
+            <li class="list-group-item list-group-item-light">ޙަބަރު</li>
+            <li class="list-group-item list-group-item-light">ކަލަންޑަރ</li>
+            <li class="list-group-item list-group-item-light">އިވެންޓްތައް</li>
+          </ul>
+        </p>
+        {% if user.is_authenticated %}
+        <div class="d-flex">
+          <a class="btn btn-success rounded-5 btn-lg flex-fill" href={% url 'blog-postcreate' %}>އާ ޕޯސްޓް</a>
+        </div>
+        {% endif %}
+      </div>
+      {% if is_paginated %}
+      <div class="sticky-paginator mx-3">
+      {% if page_obj.has_previous %}
+        <a class="btn btn-sm rounded-4 btn-outline-secondary mb-2" href="?page=1">ފުރަތަމަ ޞަފްޙާ</a>
+        <a class="btn btn-sm rounded-4 btn-outline-secondary mb-2" href="?page={{ page_obj.previous_page_number }}">ކުރީ ޞަފްޙާ</a>
+      {% endif %}
+    
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <a class="btn btn-sm rounded-4 btn-secondary mb-2" href="?page={{ num }}">{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <a class="btn btn-sm rounded-4 btn-outline-secondary mb-2" href="?page={{ num }}">{{ num }}</a>
+        {% endif %}    
+      {% endfor %}
+    
+      {% if page_obj.has_next %}
+        <a class="btn btn-sm rounded-4 btn-outline-secondary mb-2" href="?page={{ page_obj.next_page_number }}">ދެން އޮތް ޞަފްޙާ</a>
+        <a class="btn btn-sm rounded-4 btn-outline-secondary mb-2" href="?page={{ page_obj.paginator.num_pages }}">ފަހު ޞަފްޙާ</a>
+      {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</main>
+{% endblock body %}
